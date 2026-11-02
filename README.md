@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/hero.png" alt="Plugin Loader" width="100%">
+</p>
+
 # Plugin Loader
 
 Plugin loader for Motor Town.
