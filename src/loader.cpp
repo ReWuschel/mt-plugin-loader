@@ -51,6 +51,12 @@ static void vlog(FILE* f, const char* fmt, va_list a) {
     vfprintf(f, fmt, a);
     fputc('\n', f); fflush(f);
 }
+// [General] Logging=1 in mt_loader.ini. Off, no log file is even created.
+static bool logsOn() {
+    wchar_t p[MAX_PATH]; GetModuleFileNameW(nullptr, p, MAX_PATH);
+    wcscpy_s(wcsrchr(p, L'\\') + 1, MAX_PATH - (wcsrchr(p, L'\\') + 1 - p), L"mt_loader.ini");
+    return GetPrivateProfileIntW(L"General", L"Logging", 0, p) != 0;
+}
 static void logf(const char* fmt, ...) { va_list a; va_start(a, fmt); vlog(g_log, fmt, a); va_end(a); }
 
 static std::wstring exeDir() {
@@ -810,7 +816,7 @@ static DWORD WINAPI loadPlugins(LPVOID) {
         if (!init) { logf("plugin %s: PluginInit vanished on load", nm.c_str()); continue; }
         auto* p = new Plugin{ nm, nullptr, order++, {} };  // lives for the process
         std::wstring logPath = path.substr(0, path.size() - 4) + L".log";
-        p->log = _wfopen(logPath.c_str(), L"w");
+        p->log = logsOn() ? _wfopen(logPath.c_str(), L"w") : nullptr;
         p->api = { MT_API_VERSION, sizeof(MtApi), apiLog, apiWait, &g_layout, apiRead, apiWrite, apiName, apiFname,
                      apiNum, apiObject, apiFind, apiIsA, apiField, apiFieldOffset, apiRun, apiPE, apiHooked, p, apiWatch, apiNameIndex, apiPatch, apiModuleBase, apiIniSet, apiIniGet, apiPoolNames };
         int rc = init(&p->api);
@@ -826,7 +832,7 @@ BOOL APIENTRY DllMain(HMODULE h, DWORD why, LPVOID) {
         g_gameThread = GetCurrentThreadId();
         InitializeCriticalSection(&g_queueLock);
         g_engineReady = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-        g_log = _wfopen((exeDir() + L"mt_loader.log").c_str(), L"w");
+        g_log = logsOn() ? _wfopen((exeDir() + L"mt_loader.log").c_str(), L"w") : nullptr;
         // The loader owns the ini files the plugins write, so two plugins that
         // set different keys of the same file cannot overwrite each other.
         g_ini.init(exeDir(), iniLog);
