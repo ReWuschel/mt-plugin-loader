@@ -10,7 +10,7 @@
 //   3. owns the single ProcessEvent hook, which runs queued game-thread work;
   //   4. keeps the .usmap export ([Mappings] Export=1 in mt_loader.ini);
   //   5. exports the game's console variables to Binaries\Win64\mt_loader_cvars.txt
-  //      (always on: it is cheap, and it is what a modeller wants to see).
+  //      ([Mappings] ExportCvars=1 in mt_loader.ini).
 //
 // Engine discovery, the layout detection, the .usmap writer and the hook are
 // lifted from capitalist_economy\src\dllmain.cpp, where they were proven on
@@ -681,9 +681,8 @@ static DWORD WINAPI discover(LPVOID) {
     g_ini.get(L"capitalist_economy.ini", L"Mappings", L"Export", mb);
       int was = _wtoi(mb.c_str());
       if (iniInt(L"Mappings", L"Export", was)) dumpMappings(m);
-      // The console variables are cheap to export, so they are always on: one
-      // file next to the mappings, for a modeller to look at and change.
-      logf("cvars: %d exported to mt_loader_cvars.txt", dumpCvars());
+      // One file next to the mappings, for a modeller to look at and change.
+      if (iniInt(L"Mappings", L"ExportCvars", 0)) logf("cvars: %d exported to mt_loader_cvars.txt", dumpCvars());
       return 0;
   }
 
