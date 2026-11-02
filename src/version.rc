@@ -1,0 +1,31 @@
+// What Windows and antivirus tools read about the loader. A dll with none of this looks anonymous.
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_DLL
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "qxZap"
+            VALUE "FileDescription", "Motor Town Plugin Loader"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "MotorTownPluginLoader"
+            VALUE "LegalCopyright", "qxZap. Open source: github.com/qxZap/mt-plugin-loader"
+            VALUE "OriginalFilename", "version.dll"
+            VALUE "ProductName", "Motor Town Plugin Loader"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

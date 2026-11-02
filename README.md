@@ -25,6 +25,26 @@ Build: `build.bat` (MSVC 2022) -> `out\`. Proton: `WINEDLLOVERRIDES="version=n,b
   log says `ProcessEvent: vtable index N, M slots hooked`; if that line is
   missing, nothing that touches the game thread runs.
 
+## Linux and Steam Deck
+
+Proton loads its own `version.dll` unless told otherwise. Add this to the game's Steam launch
+options:
+
+    WINEDLLOVERRIDES="version=n,b" %command%
+
+## Antivirus warnings
+
+Windows Defender and a few other scanners can flag `version.dll`. VirusTotal showed 3 of 60 for
+one build (ClamAV `Win.Backdoor.Sagerunex`, Microsoft `Trojan:Win32/Wacatac.C!ml`, Cynet). The
+`!ml` means a machine learning guess, not a known virus. The loader has to look suspicious to a
+scanner: it sits in the game folder under a Windows dll's name, and it patches the running game.
+It makes no network connections, downloads nothing and runs no commands, and the source is here
+to read and build yourself.
+
+If yours flags it, get the dll from this repo's releases, compare its SHA-256 with the one
+published there, and exclude only the game's `Binaries\Win64` folder. Do not turn Windows
+Security off.
+
 ## Rules
 
 - Only `plugins\mt_plugin_*.dll` loads, in **alphabetical order** of file name
